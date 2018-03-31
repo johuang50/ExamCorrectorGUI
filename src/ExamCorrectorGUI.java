@@ -1,14 +1,19 @@
-import java.awt.*;
+import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.text.DecimalFormat;
 
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.*;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -18,8 +23,11 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.border.EmptyBorder;
 
+@SuppressWarnings("serial")
 public class ExamCorrectorGUI extends JFrame {
 
 	private JPanel contentPane;
@@ -30,8 +38,13 @@ public class ExamCorrectorGUI extends JFrame {
 	private JTextField curveTotal;
 	// private JLabel output = new JLabel("");
 	JCheckBox chckbxCurve;
+	JToggleButton fileSaver;
 	private int pointValue = 1;
 	private boolean curve = false;
+	static String fileName = "";
+	private JTextField textField_2;
+	private JTextField textField_3;
+	private JLabel output;
 
 	/**
 	 * Launch the application.
@@ -39,6 +52,16 @@ public class ExamCorrectorGUI extends JFrame {
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
+				try {
+					for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+						if ("Nimbus".equals(info.getName())) {
+							UIManager.setLookAndFeel(info.getClassName());
+							break;
+						}
+					}
+				} catch (Exception e) {
+					// If Nimbus is not available, you can set the GUI to another look and feel.
+				}
 				try {
 					ExamCorrectorGUI frame = new ExamCorrectorGUI();
 					// frame.setSize(new Dimension(600, 450));
@@ -53,13 +76,14 @@ public class ExamCorrectorGUI extends JFrame {
 	/**
 	 * Create the frame.
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public ExamCorrectorGUI() {
 		setTitle("Chemistry Exam Scores Generator");
 		setResizable(false);
 		setForeground(Color.WHITE);
 		// setBackground(Color.DARK_GRAY);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 320);
+		setBounds(100, 100, 450, 330);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -71,7 +95,7 @@ public class ExamCorrectorGUI extends JFrame {
 		contentPane.add(lblStudentsScore);
 
 		textField = new JTextField();
-		textField.setBounds(168, 69, 86, 20);
+		textField.setBounds(168, 62, 54, 31);
 		contentPane.add(textField);
 		textField.setColumns(10);
 
@@ -81,27 +105,27 @@ public class ExamCorrectorGUI extends JFrame {
 		contentPane.add(lblTotalScore);
 
 		textField_1 = new JTextField();
-		textField_1.setBounds(168, 104, 86, 20);
+		textField_1.setBounds(168, 99, 54, 31);
 		contentPane.add(textField_1);
 		textField_1.setColumns(10);
 
 		JLabel lblCorrectCurve = new JLabel("Add Correct:");
 		lblCorrectCurve.setHorizontalAlignment(SwingConstants.TRAILING);
-		lblCorrectCurve.setBounds(39, 230, 101, 14);
+		lblCorrectCurve.setBounds(39, 240, 101, 14);
 		// contentPane.add(lblCorrectCurve);
 
 		curveCorrect = new JTextField();
-		curveCorrect.setBounds(168, 230, 86, 20);
+		curveCorrect.setBounds(168, 233, 54, 31);
 		// contentPane.add(textField_1);
 		textField_1.setColumns(10);
 
 		JLabel lblTotalCurve = new JLabel("Add Total:");
 		lblTotalCurve.setHorizontalAlignment(SwingConstants.TRAILING);
-		lblTotalCurve.setBounds(39, 260, 101, 14);
+		lblTotalCurve.setBounds(39, 270, 101, 14);
 		// contentPane.add(lblCorrectCurve);
 
 		curveTotal = new JTextField();
-		curveTotal.setBounds(168, 260, 86, 20);
+		curveTotal.setBounds(168, 263, 54, 31);
 		// contentPane.add(textField_1);
 		textField_1.setColumns(10);
 
@@ -115,7 +139,7 @@ public class ExamCorrectorGUI extends JFrame {
 		contentPane.add(chckbxCurve);
 		comboBox.setModel(new DefaultComboBoxModel(new Integer[] { 1, 2, 3, 4, 5 }));
 		comboBox.setToolTipText("");
-		comboBox.setBounds(200, 135, 54, 25);
+		comboBox.setBounds(172, 135, 46, 30);
 		contentPane.add(comboBox);
 		/* Number Listener */
 		ActionListener comboBoxListener = new ActionListener() {
@@ -125,31 +149,7 @@ public class ExamCorrectorGUI extends JFrame {
 
 			}
 		};
-
-		/*
-		 * ItemListener oneListener = new ItemListener() {
-		 * 
-		 * @Override public void itemStateChanged(ItemEvent e) {
-		 * comboBox.setSelectedIndex(1); } }; ItemListener twoListener = new
-		 * ItemListener() {
-		 * 
-		 * @Override public void itemStateChanged(ItemEvent e) {
-		 * comboBox.setSelectedIndex(2); } }; ItemListener threeListener = new
-		 * ItemListener() {
-		 * 
-		 * @Override public void itemStateChanged(ItemEvent e) { pointValue = 3; } };
-		 * ItemListener fourListener = new ItemListener() {
-		 * 
-		 * @Override public void itemStateChanged(ItemEvent e) { pointValue = 4; } };
-		 * ItemListener fiveListener = new ItemListener() {
-		 * 
-		 * @Override public void itemStateChanged(ItemEvent e) { pointValue = 5; } };
-		 */
 		comboBox.addActionListener(comboBoxListener);
-		// comboBox.addItemListener(twoListener);
-		// comboBox.addItemListener(threeListener);
-		// comboBox.addItemListener(fourListener);
-		// comboBox.addItemListener(fiveListener);
 
 		JLabel lblNewLabel_1 = new JLabel("Exam Grade Calculator");
 		lblNewLabel_1.setFont(new Font("Orange LET", Font.PLAIN, 28));
@@ -162,56 +162,120 @@ public class ExamCorrectorGUI extends JFrame {
 		lblNewLabel_2.setBounds(20, 140, 120, 14);
 		contentPane.add(lblNewLabel_2);
 
-		JLabel output = new JLabel("");
+		output = new JLabel("");
 		output.setHorizontalAlignment(SwingConstants.LEADING);
-		output.setBounds(94, 226, 25500, 84);
-//		output.setHorizontalAlignment(SwingConstants.CENTER);
+		output.setBounds(94, 250, 25500, 84);
+		// output.setHorizontalAlignment(SwingConstants.CENTER);
 		contentPane.add(output);
 
-		JToggleButton tglbtnSaveInDocument = new JToggleButton("Save In Document");
-		tglbtnSaveInDocument.setBounds(291, 174, 143, 23);
-		contentPane.add(tglbtnSaveInDocument);
+		JLabel fileNameLabel = new JLabel("File Name:");
+		fileNameLabel.setHorizontalAlignment(SwingConstants.TRAILING);
+		fileNameLabel.setBounds(-36, 205, 101, 14);
+		contentPane.add(fileNameLabel);
+
+		fileSaver = new JToggleButton("Store In Doc");
+		fileSaver.setHorizontalAlignment(SwingConstants.CENTER);
+		fileSaver.setBounds(291, 174, 143, 23);
+		fileSaver.setSelected(true);
+		contentPane.add(fileSaver);
 
 		JButton btnCalculateScore = new JButton("Calculate Score");
-		btnCalculateScore.setBounds(94, 226, 255, 34);
+		btnCalculateScore.setBounds(94, 236, 255, 50);
 		contentPane.add(btnCalculateScore);
+
+		textField_2 = new JTextField();//
+		textField_2.setBounds(70, 200, 126, 27);
+		contentPane.add(textField_2);
+		textField_2.setColumns(10);
+
+		JLabel lblStudentName = new JLabel("Student Name:");//
+		lblStudentName.setHorizontalAlignment(SwingConstants.TRAILING);
+		lblStudentName.setBounds(205, 205, 86, 14);
+		contentPane.add(lblStudentName);
+
+		textField_3 = new JTextField();//
+		textField_3.setBounds(301, 200, 133, 27);
+		contentPane.add(textField_3);
+		textField_3.setColumns(10);
+
+		JLabel lblNewLabel_3 = new JLabel("by Joshua Huang");
+		lblNewLabel_3.setFont(new Font("Tahoma", Font.PLAIN, 9));
+		lblNewLabel_3.setBounds(353, 28, 81, 14);
+		contentPane.add(lblNewLabel_3);
 
 		btnCalculateScore.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				try {
 					output.setText(calculate() + "% Correct                 " + (score(curve, pointValue)));
 					// updateCalc();
-//					System.out.println(calculate() + "% Correct");
-//					System.out.println(score(curve, pointValue));
+					// System.out.println(calculate() + "% Correct");
+					// System.out.println(score(curve, pointValue));
 				} catch (NumberFormatException exc) {
 					output.setText(("                    Please Enter Numbers"));
 				}
+
+				generateFile();
 			}
 		});
-		ActionListener curveListener = new ActionListener() {
+		ActionListener modeListener = new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				if (chckbxCurve.isSelected()) {
-					setBounds(100, 100, 450, 390);
-					btnCalculateScore.setBounds(94, 296, 255, 34);
+				if (chckbxCurve.isSelected() && fileSaver.isSelected()) {
+					setBounds(100, 100, 450, 400);
+					btnCalculateScore.setBounds(94, 306, 255, 50);
+					fileNameLabel.setText("File Name:");
+					lblStudentName.setText("Student Name:");
 					contentPane.add(lblCorrectCurve);
 					contentPane.add(curveCorrect);
 					contentPane.add(lblTotalCurve);
 					contentPane.add(curveTotal);
 					curve = true;
-					output.setBounds(94, 296, 25500, 84);
-				} else {
-					setBounds(100, 100, 450, 320);
-					btnCalculateScore.setBounds(94, 226, 255, 34);
+					output.setBounds(94, 320, 25500, 84);
+					textField_2.setVisible(true);
+					textField_3.setVisible(true);
+				} else if (fileSaver.isSelected()) {
+					setBounds(100, 100, 450, 330);
+					btnCalculateScore.setBounds(94, 236, 255, 50);
 					contentPane.remove(lblCorrectCurve);
 					contentPane.remove(curveCorrect);
 					contentPane.remove(lblTotalCurve);
 					contentPane.remove(curveTotal);
+					fileNameLabel.setText("File Name:");
+					lblStudentName.setText("Student Name:");
 					curve = false;
-					output.setBounds(94, 226, 25500, 84);
+					output.setBounds(94, 250, 25500, 84);
+					textField_2.setVisible(true);
+					textField_3.setVisible(true);
+				} else if (chckbxCurve.isSelected()) {
+					setBounds(100, 100, 450, 400);
+					btnCalculateScore.setBounds(94, 306, 255, 50);
+					contentPane.add(lblCorrectCurve);
+					contentPane.add(curveCorrect);
+					contentPane.add(lblTotalCurve);
+					contentPane.add(curveTotal);
+					fileNameLabel.setText("");
+					lblStudentName.setText("");
+					curve = true;
+					output.setBounds(94, 320, 25500, 84);
+					textField_2.setVisible(false);
+					textField_3.setVisible(false);
+				} else {
+					setBounds(100, 100, 450, 330);
+					btnCalculateScore.setBounds(94, 236, 255, 50);
+					contentPane.remove(lblCorrectCurve);
+					contentPane.remove(curveCorrect);
+					contentPane.remove(lblTotalCurve);
+					contentPane.remove(curveTotal);
+					fileNameLabel.setText("");
+					lblStudentName.setText("");
+					curve = false;
+					output.setBounds(94, 250, 25500, 84);
+					textField_2.setVisible(false);
+					textField_3.setVisible(false);
 				}
 			}
 		};
-		chckbxCurve.addActionListener(curveListener);
+		chckbxCurve.addActionListener(modeListener);
+		fileSaver.addActionListener(modeListener);
 	}
 
 	private double calculate() {
@@ -239,5 +303,27 @@ public class ExamCorrectorGUI extends JFrame {
 			return "Score: " + corrects * pointValue + " out of " + total * pointValue;
 		}
 
+	}
+
+	private void generateFile() {
+		if (fileSaver.isSelected()) {
+			String s = System.lineSeparator();			
+			try {
+				Files.write(Paths.get("recordedLogs/"+textField_2.getText()+".txt"), s.getBytes(), StandardOpenOption.APPEND);
+			    Files.write(Paths.get("recordedLogs/"+textField_2.getText()+".txt"), (textField_3.getText()+": "+output.getText()).getBytes(), StandardOpenOption.APPEND);
+			}catch (IOException e) {
+				File dir = new File("recordedLogs");
+				dir.mkdirs();
+				File file = new File(dir, textField_2.getText()+".txt");
+				try {
+					PrintWriter display = new PrintWriter("recordedLogs/"+textField_2.getText()+".txt");
+					display.print(textField_3.getText()+": "+output.getText());
+					display.close();
+				} catch (FileNotFoundException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		}
 	}
 }
