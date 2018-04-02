@@ -39,7 +39,6 @@ public class ExamScorerGUI extends JFrame {
 	// private JLabel output = new JLabel("");
 	JCheckBox chckbxCurve;
 	JToggleButton fileSaver;
-	private int nameSize;
 	private int pointValue = 1;
 	private boolean curve = false;
 	static String fileName = "";
