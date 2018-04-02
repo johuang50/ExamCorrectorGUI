@@ -39,6 +39,7 @@ public class ExamCorrectorGUI extends JFrame {
 	// private JLabel output = new JLabel("");
 	JCheckBox chckbxCurve;
 	JToggleButton fileSaver;
+	private int nameSize;
 	private int pointValue = 1;
 	private boolean curve = false;
 	static String fileName = "";
@@ -207,14 +208,14 @@ public class ExamCorrectorGUI extends JFrame {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				try {
 					output.setText(calculate() + "% Correct                 " + (score(curve, pointValue)));
+					generateFile();
+					
 					// updateCalc();
 					// System.out.println(calculate() + "% Correct");
 					// System.out.println(score(curve, pointValue));
 				} catch (NumberFormatException exc) {
 					output.setText(("                    Please Enter Numbers"));
 				}
-
-				generateFile();
 			}
 		});
 		ActionListener modeListener = new ActionListener() {
@@ -306,7 +307,7 @@ public class ExamCorrectorGUI extends JFrame {
 	}
 
 	private void generateFile() {
-		if (fileSaver.isSelected()) {
+		if (fileSaver.isSelected()&&!textField_3.getText().isEmpty()) {
 			String s = System.lineSeparator();			
 			try {
 				Files.write(Paths.get("recordedLogs/"+textField_2.getText()+".txt"), s.getBytes(), StandardOpenOption.APPEND);
@@ -314,6 +315,7 @@ public class ExamCorrectorGUI extends JFrame {
 			}catch (IOException e) {
 				File dir = new File("recordedLogs");
 				dir.mkdirs();
+				@SuppressWarnings("unused")
 				File file = new File(dir, textField_2.getText()+".txt");
 				try {
 					PrintWriter display = new PrintWriter("recordedLogs/"+textField_2.getText()+".txt");
@@ -326,4 +328,24 @@ public class ExamCorrectorGUI extends JFrame {
 			}
 		}
 	}
+	
+//	private double getAverage() {
+//		nameSize = textField_3.getText().length();
+//		try {
+//			Files.readAllLines(Paths.get("recordedLogs/"+textField_2.getText()+".txt"));
+//		    Files.write(Paths.get("recordedLogs/"+textField_2.getText()+".txt"), (textField_3.getText()+": "+output.getText()).getBytes(), StandardOpenOption.APPEND);
+//		}catch (IOException e) {
+//			File dir = new File("recordedLogs");
+//			dir.mkdirs();
+//			File file = new File(dir, textField_2.getText()+".txt");
+//			try {
+//				PrintWriter display = new PrintWriter("recordedLogs/"+textField_2.getText()+".txt");
+//				display.print(textField_3.getText()+": "+output.getText());
+//				display.close();
+//			} catch (FileNotFoundException e1) {
+//				// TODO Auto-generated catch block
+//				e1.printStackTrace();
+//			}
+//		}
+//	}
 }

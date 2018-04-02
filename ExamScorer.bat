@@ -1,0 +1,1 @@
+start "JavaPortableLauncher\JavaPortableLauncher.exe" "ExamScorer.jar"
