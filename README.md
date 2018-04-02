@@ -1,2 +1,6 @@
 # ExamScorer
-Mainly dedicated for teachers at the Novi High School but could have other usages. This graphical user interface allows one to type in the number of questions on a test answered right, and the total number of questions. With this it calculates a percentage with the option of a curve of any value. It also displays a score out of total no. of points in case there are multiple points per question.
+
+This is a GUI that can culculate the scores of any points-based test. Functions are:
+-Adding addition curves
+-Saving all scores in a text file as referance
+-Immediate calculation on the open window
