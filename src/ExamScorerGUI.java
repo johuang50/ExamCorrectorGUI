@@ -28,7 +28,7 @@ import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.border.EmptyBorder;
 
 @SuppressWarnings("serial")
-public class ExamCorrectorGUI extends JFrame {
+public class ExamScorerGUI extends JFrame {
 
 	private JPanel contentPane;
 	private JTextField textField;
@@ -64,7 +64,7 @@ public class ExamCorrectorGUI extends JFrame {
 					// If Nimbus is not available, you can set the GUI to another look and feel.
 				}
 				try {
-					ExamCorrectorGUI frame = new ExamCorrectorGUI();
+					ExamScorerGUI frame = new ExamScorerGUI();
 					// frame.setSize(new Dimension(600, 450));
 					frame.setVisible(true);
 				} catch (Exception e) {
@@ -78,7 +78,7 @@ public class ExamCorrectorGUI extends JFrame {
 	 * Create the frame.
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public ExamCorrectorGUI() {
+	public ExamScorerGUI() {
 		setTitle("Chemistry Exam Scores Generator");
 		setResizable(false);
 		setForeground(Color.WHITE);
