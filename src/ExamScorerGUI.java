@@ -1,6 +1,7 @@
 import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Font;
+import java.awt.FontFormatException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -45,6 +46,7 @@ public class ExamScorerGUI extends JFrame {
 	private JTextField textField_2;
 	private JTextField textField_3;
 	private JLabel output;
+	private static Font font;
 
 	/**
 	 * Launch the application.
@@ -78,7 +80,7 @@ public class ExamScorerGUI extends JFrame {
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public ExamScorerGUI() {
-		setTitle("Chemistry Exam Scores Generator");
+		setTitle("Exam Scores Calculator");
 		setResizable(false);
 		setForeground(Color.WHITE);
 		// setBackground(Color.DARK_GRAY);
@@ -151,12 +153,6 @@ public class ExamScorerGUI extends JFrame {
 		};
 		comboBox.addActionListener(comboBoxListener);
 
-		JLabel lblNewLabel_1 = new JLabel("Exam Grade Calculator");
-		lblNewLabel_1.setFont(new Font("Orange LET", Font.PLAIN, 28));
-		lblNewLabel_1.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel_1.setBounds(61, 14, 323, 44);
-		contentPane.add(lblNewLabel_1);
-
 		JLabel lblNewLabel_2 = new JLabel("Points Per Question:");
 		lblNewLabel_2.setHorizontalAlignment(SwingConstants.TRAILING);
 		lblNewLabel_2.setBounds(20, 140, 120, 14);
@@ -197,9 +193,24 @@ public class ExamScorerGUI extends JFrame {
 		textField_3.setBounds(301, 200, 133, 27);
 		contentPane.add(textField_3);
 		textField_3.setColumns(10);
+		
+		JLabel lblNewLabel_4 = new JLabel("Novi Exam Scorer");
+		File font_file = new File("schoolfont.ttf");
+		try {
+			font = Font.createFont(Font.TRUETYPE_FONT, font_file);
+			font = font.deriveFont(30.0f);
+		} catch (FontFormatException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		lblNewLabel_4.setForeground(new Color(39, 102, 29));
+		lblNewLabel_4.setFont(font);
+		lblNewLabel_4.setHorizontalAlignment(SwingConstants.CENTER);
+		lblNewLabel_4.setBounds(65, -65, 300, 200);
+		contentPane.add(lblNewLabel_4);
 
 		JLabel lblNewLabel_3 = new JLabel("by Joshua Huang");
-		lblNewLabel_3.setFont(new Font("Tahoma", Font.PLAIN, 9));
+		lblNewLabel_3.setFont(new Font("", Font.PLAIN, 9));
 		lblNewLabel_3.setBounds(353, 28, 81, 14);
 		contentPane.add(lblNewLabel_3);
 
